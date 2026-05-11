@@ -1,7 +1,8 @@
 ﻿namespace project_redcode.Models
 {
-    public class User    {
+    public class UserDto
+    {
         public string Username { get; set; }
-        public string PasswordHashed { get; set; }
+        public string Password { get; set; }
     }
 }
