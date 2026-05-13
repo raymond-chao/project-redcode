@@ -1,28 +1,78 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using project_redcode.Data;
 using project_redcode.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace project_redcode.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController(IConfiguration configuration) : ControllerBase
     {
-        public static User user = new();
 
         [HttpPost("register")]
-        public ActionResult<User> Register(UserDto request)
+        public ActionResult<string> Register(UserDto request)
         {
-            var hashedPassword = new PasswordHasher<User>()
-                .HashPassword(user, request.Password);
-           
-            var username = request.Username;
-            user.PasswordHash = hashedPassword;
+            if (Database.Users.Any(user => user.Username == request.Username))
+                return BadRequest("User already exists");
 
-            return Ok(user);
+            var newUser = new User
+            {
+                Username = request.Username,
+                PasswordHashed = new PasswordHasher<User>()
+                    .HashPassword(null, request.Password)
+            };
+            Database.Users.Add(newUser);
+            return Ok(new { message = "User registered successfully" });
 
         }
 
+        [HttpPost("login")]
+        public ActionResult<string> Login(UserDto request)
+        {
+            var user = Database.Users.FirstOrDefault(user => user.Username == request.Username);
+            if (user == null)
+                return BadRequest("User not found");
+
+            var pass = new PasswordHasher<User>().VerifyHashedPassword(null, user.PasswordHashed, request.Password);
+
+            if (pass == PasswordVerificationResult.Failed)
+                return BadRequest("Wrong password");
+
+            string token = CreateToken(user);
+            return Ok(new { token });
+
+
+
+
+        }
+
+        private string CreateToken(User user) //Sparar identieteten i token
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Username)
+            };
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    configuration.GetValue<string>("AppSettings:Token")!)); //TODO: LÄGG TILL KEY
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var tokenDescriptor = new JwtSecurityToken(
+                issuer: configuration.GetValue<string>("AppSettings:Issuer"),
+                audience: configuration.GetValue<string>("AppSettings:Audience"),
+                claims: claims,
+                expires: DateTime.Now.AddDays(1),
+                signingCredentials: creds
+                 );
+            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+        }
     }
 }
