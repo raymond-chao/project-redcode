@@ -2,20 +2,26 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideToastr } from 'ngx-toastr';
 
-import { User } from './user';
+import { Login } from './login';
 
-describe('User', () => {
-  let component: User;
-  let fixture: ComponentFixture<User>;
+describe('Login', () => {
+  let component: Login;
+  let fixture: ComponentFixture<Login>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [User],
-      providers: [provideHttpClient(), provideRouter([]), provideNoopAnimations()],
+      imports: [Login],
+      providers: [
+        provideHttpClient(),
+        provideRouter([]),
+        provideNoopAnimations(),
+        provideToastr(),
+      ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(User);
+    fixture = TestBed.createComponent(Login);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

@@ -1,26 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using project_redcode.Models;
+using project_redcode.Data;
 
 namespace project_redcode.Controllers
 {
-
     [Route("api/[controller]")]
     [ApiController]
-    public class BookController : Controller
+    [Authorize]
+    public class BookController : ControllerBase
     {
-        static private List<Book> books = new List<Book>()
+
+        [HttpGet]
+        public ActionResult<List<Book>> GetAllBooks()
         {
-            new Book { Id = 1, Title = "The Great Gatsby", Author = "F. Scott Fitzgerald", YearPublished = 1925 },
-            new Book { Id = 2, Title = "Clean Code", Author = "Robert C. Martin", YearPublished = 2008 },
-            new Book { Id = 3, Title = "The Pragmatic Programmer", Author = "Andrew Hunt and David Thomas", YearPublished = 1999 },
-            new Book { Id = 4, Title = "Head First Java", Author = "Kathy Sierra and Bert Bates", YearPublished = 2003 },
-            new Book {Id = 5, Title = "Learning Programming", Author = "Jennifer Niederst Robbins", YearPublished = 2018 }
-        };
+            return Ok(Database.Books);
+        }
 
         [HttpGet("{id}")]
         public ActionResult<Book> GetBookById(int id)
         {
-            var book = books.FirstOrDefault(x => x.Id == id);
+            var book = Database.Books.FirstOrDefault(x => x.Id == id);
             if (book == null)
                 return NotFound();
             return Ok(book);
@@ -32,15 +34,15 @@ namespace project_redcode.Controllers
             if (newBook == null)
                 return BadRequest();
 
-            books.Add(newBook);
+            newBook.Id = Database.Books.Any() ? Database.Books.Max(x => x.Id) + 1 : 1;
+            Database.Books.Add(newBook);
             return CreatedAtAction(nameof(GetBookById), new { id = newBook.Id }, newBook);
-
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateBook(int id, Book updatedBook)
         {
-            var book = books.FirstOrDefault(x => x.Id == id);
+            var book = Database.Books.FirstOrDefault(x => x.Id == id);
             if (book == null)
                 return NotFound();
             book.Id = updatedBook.Id;
@@ -54,10 +56,10 @@ namespace project_redcode.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteBook(int id)
         {
-            var book = books.FirstOrDefault(x => x.Id == id);
+            var book = Database.Books.FirstOrDefault(x => x.Id == id);
             if (book == null)
                 return NotFound();
-            books.Remove(book);
+            Database.Books.Remove(book);
             return NoContent();
         }
     }
