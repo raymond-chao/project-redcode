@@ -14,6 +14,13 @@ namespace project_redcode.Data
         };
 
         public static List<User> Users = new();
-        public static List<Quote> Quotes = new();
+        public static List<Quote> Quotes = new()
+        {
+            new Quote { Id = 1, Text = "Stay hungry stay foolish" },
+            new Quote { Id = 2, Text = "Code is like humor" },
+            new Quote { Id = 3, Text = "First solve the problem" },
+            new Quote { Id = 4, Text = "Make it work make it right"},
+            new Quote { Id = 5, Text = "Simplicity is key"}
+        };
     }
 }
