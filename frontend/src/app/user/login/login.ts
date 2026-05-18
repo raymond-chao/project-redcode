@@ -34,8 +34,6 @@ export class Login {
 
 onSubmit() {
 
-  console.log('LOGIN CLICKED');
-
   this.isSubmitted = true;
 
   if (this.form.valid) {

@@ -113,15 +113,15 @@ export class Dashboard {
   //Quotes
   
   loadQuotes() {
-    console.log('🔍 Loading quotes...');
+    console.log('Loading quotes...');
     this.quoteService.getAllQuotes().subscribe({
       next: (res: any) => {
-        console.log('✅ Quotes:', res);
+        console.log('Quotes:', res);
         this.quotes = res;
         this.cdr.detectChanges();
       },
       error: (err: any) => {
-        console.error('❌ Error:', err);
+        console.error('Error:', err);
         alert(`Fel vid laddning: ${err.status}`);
       }
     });
@@ -134,7 +134,7 @@ export class Dashboard {
     }
 
     const quoteToSend = { text: this.newQuote.trim() };
-    console.log('➕ Adding:', quoteToSend);
+    console.log('Adding:', quoteToSend);
 
     this.quoteService.addQuote(quoteToSend).subscribe({
       next: () => {
@@ -142,7 +142,7 @@ export class Dashboard {
         this.cancelQuoteEdit();
       },
       error: (err: any) => {
-        console.error('❌ Error:', err);
+        console.error('Error:', err);
         alert(`Fel vid sparning: ${err.status}`);
       }
     });

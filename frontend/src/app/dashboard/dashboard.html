@@ -140,7 +140,6 @@
     </div>
   </div>
 
-<!-- QUOTES VIEW -->
 <div *ngIf="activeView === 'quotes'" class="quotes-view">
   <div class="row">
     <div class="col-12">
@@ -148,7 +147,6 @@
     </div>
   </div>
 
-  <!-- Add/Edit Quote Form -->
   <div class="row mb-4">
     <div class="col-lg-6">
       <div class="card">
@@ -169,7 +167,7 @@
             </div>
             
             <div class="d-flex gap-2">
-              <button type="submit" class="btn btn-primary">
+              <button type="submit" class="btn btn-success">
                 <i class="fas" [class.fa-save]="editingQuoteId !== null" 
                    [class.fa-plus]="editingQuoteId === null"></i>
                 {{ editingQuoteId !== null ? 'Uppdatera' : 'Lägg till' }}
