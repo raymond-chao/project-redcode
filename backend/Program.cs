@@ -9,7 +9,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Load JWT secret and fail fast if missing (do NOT fall back to a hard-coded secret)
 var jwtSecret = builder.Configuration["AppSettings:Token"];
 if (string.IsNullOrWhiteSpace(jwtSecret))
 {
@@ -34,7 +33,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// CORS: explicitly allow both http and https dev origins, adjust for production
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>

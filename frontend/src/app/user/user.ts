@@ -1,25 +1,14 @@
 import { Component } from '@angular/core';
-import { ChildrenOutletContexts, Router, RouterOutlet } from '@angular/router';
-import { animate, style, transition, trigger } from '@angular/animations';
-import { Registration } from './registration/registration';
+import { ChildrenOutletContexts, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [Registration, RouterOutlet],
+  imports: [RouterOutlet],
   templateUrl: './user.html',
-  styles: ``,
-  animations: [
-    trigger('routerFadeIn', [
-      transition('* <=> *', [
-        style({ opacity: 0 }),
-        animate('200ms ease-in', style({ opacity: 1 }))
-      ])
-    ])
-  ]
+  styles: ``
 })
 export class User {
-
   constructor(private context: ChildrenOutletContexts) { }
 
   getRouteUrl() {

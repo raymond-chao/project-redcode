@@ -5,15 +5,38 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class Auth {
-  constructor(private http:HttpClient) { }
-  baseURL = 'http://localhost:5007/api';
+
+  constructor(private http: HttpClient) { }
+
+  baseURL = 'https://localhost:7057/api/auth';
+
+    getAll() {
+    return this.http.get(this.baseURL);
+  }
+
+  create(book: any) {
+    return this.http.post(this.baseURL, book);
+  }
+
+  update(id: number, book: any) {
+    return this.http.put(`${this.baseURL}/${id}`, book);
+  }
+
+  delete(id: number) {
+    return this.http.delete(`${this.baseURL}/${id}`);
+  }
 
   createUser(formData:any){
-    return this.http.post(this.baseURL+'/signup',formData);
+    return this.http.post(
+      this.baseURL + '/register',
+      formData
+    );
   }
 
   signin(formData:any){
-    return this.http.post(this.baseURL+'/signin',formData);
+    return this.http.post(
+      this.baseURL + '/login',
+      formData
+    );
   }
-  
 }

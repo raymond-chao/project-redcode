@@ -33,18 +33,37 @@ export class Login {
   }
 
 onSubmit() {
-  console.log('SUBMIT WORKS');
+
+  console.log('LOGIN CLICKED');
+
   this.isSubmitted = true;
 
   if (this.form.valid) {
 
-    console.log(this.form.value);
+    this.service.signin(this.form.value)
+      .subscribe({
 
-    localStorage.setItem('token', 'fake-jwt-token');
+        next: (res:any) => {
 
-    this.toastr.success('Login successful');
+          localStorage.setItem(
+            'token',
+            res.token
+          );
 
-    this.router.navigateByUrl('/dashboard');
+          this.toastr.success('Login successful');
+
+          this.router.navigateByUrl('/dashboard');
+        },
+
+        error: err => {
+
+          this.toastr.error(
+            'Invalid credentials'
+          );
+
+          console.log(err);
+        }
+      });
   }
 }
 

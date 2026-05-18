@@ -5,13 +5,21 @@ import { Login } from './user/login/login';
 import { Dashboard } from './dashboard/dashboard';
 
 export const routes: Routes = [
-  {path: '', redirectTo: 'signin', pathMatch: 'full'},
-  { path: '', component: User,
+  {
+    path: '',
+    redirectTo: '/signin',
+    pathMatch: 'full'
+  },
+  {
+    path: '',
+    component: User,
     children: [
-      {path: 'signup', component: Registration},
-      {path: 'signin', component: Login}
-
+      { path: 'signup', component: Registration },
+      { path: 'signin', component: Login }
     ]
-   },
-   { path: 'dashboard', component: Dashboard }
+  },
+  {
+    path: 'dashboard',
+    component: Dashboard
+  }
 ];

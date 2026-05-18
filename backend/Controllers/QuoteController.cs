@@ -5,11 +5,10 @@ using project_redcode.Models;
 
 namespace project_redcode.Controllers
 {
-
-    [Route("api/[controller]")]
+    [Route("api/quotes")] 
     [ApiController]
-    [Authorize]
-    public class QuoteController : Controller
+    // [Authorize]
+    public class QuoteController : ControllerBase
     {
         [HttpGet]
         public ActionResult<List<Quote>> GetAllQuotes()
@@ -29,8 +28,8 @@ namespace project_redcode.Controllers
         [HttpPost]
         public ActionResult<Quote> AddQuote(Quote newQuote)
         {
-            if (newQuote == null)
-                return BadRequest();
+            if (newQuote == null || string.IsNullOrWhiteSpace(newQuote.Text))
+                return BadRequest("Quote text is required");
 
             newQuote.Id = Database.Quotes.Any() ? Database.Quotes.Max(q => q.Id) + 1 : 1;
             Database.Quotes.Add(newQuote);
@@ -44,8 +43,10 @@ namespace project_redcode.Controllers
             if (quote == null)
                 return NotFound();
 
+            if (string.IsNullOrWhiteSpace(updatedQuote.Text))
+                return BadRequest("Quote text is required");
+
             quote.Text = updatedQuote.Text;
-            quote.Author = updatedQuote.Author;
             return NoContent();
         }
 
@@ -55,6 +56,7 @@ namespace project_redcode.Controllers
             var quote = Database.Quotes.FirstOrDefault(q => q.Id == id);
             if (quote == null)
                 return NotFound();
+
             Database.Quotes.Remove(quote);
             return NoContent();
         }

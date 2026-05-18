@@ -18,12 +18,12 @@ namespace project_redcode.Controllers
         [HttpPost("register")]
         public ActionResult<string> Register(UserDto request)
         {
-            if (Database.Users.Any(user => user.Username == request.Username))
+            if (Database.Users.Any(user => user.Username == request.Email))
                 return BadRequest("User already exists");
 
             var newUser = new User
             {
-                Username = request.Username,
+                Username = request.Email,
                 PasswordHashed = new PasswordHasher<User>()
                     .HashPassword(null, request.Password)
             };
@@ -35,7 +35,7 @@ namespace project_redcode.Controllers
         [HttpPost("login")]
         public ActionResult<string> Login(UserDto request)
         {
-            var user = Database.Users.FirstOrDefault(user => user.Username == request.Username);
+            var user = Database.Users.FirstOrDefault(user => user.Username == request.Email);
             if (user == null)
                 return BadRequest("User not found");
 

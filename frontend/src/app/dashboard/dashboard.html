@@ -1,1 +1,228 @@
-<button class="btn btn-dark" (click)="onLogout()">Logout</button>
+<div class="container-fluid">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-book-reader"></i> Mitt bibliotek
+      </a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+              data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="activeView === 'books'" 
+               (click)="switchView('books')" style="cursor: pointer;">
+              <i class="fas fa-book"></i> Böcker
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [class.active]="activeView === 'quotes'" 
+               (click)="switchView('quotes')" style="cursor: pointer;">
+              <i class="fas fa-quote-left"></i> Mina Citat
+            </a>
+          </li>
+        </ul>
+        
+        <button class="btn btn-outline-light" (click)="onLogout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div *ngIf="activeView === 'books'" class="books-view">
+    <div class="row">
+      <div class="col-12">
+        <h2><i class="fas fa-book"></i> Böcker</h2>
+      </div>
+    </div>
+
+    <div class="row mb-4">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header">
+            <h5>
+              <i class="fas fa-plus-circle"></i> 
+              {{ editingBookId ? 'Redigera Bok' : 'Lägg till Ny Bok' }}
+            </h5>
+          </div>
+          <div class="card-body">
+            <form (ngSubmit)="editingBookId ? updateBook() : addBook()">
+              <div class="mb-3">
+                <label class="form-label">
+                  <i class="fas fa-heading"></i> Titel
+                </label>
+                <input type="text" class="form-control" 
+                       [(ngModel)]="newBook.title" name="title" placeholder="Ange titel" required>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label">
+                  <i class="fas fa-user"></i> Författare
+                </label>
+                <input type="text" class="form-control" 
+                       [(ngModel)]="newBook.author" name="author" placeholder="Ange författare" required>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label">
+                  <i class="fas fa-calendar"></i> Publicerad
+                </label>
+                <input type="number" class="form-control" 
+                       [(ngModel)]="newBook.yearPublished" name="yearPublished" placeholder="2026">
+              </div>
+              
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">
+                  <i class="fas" [class.fa-save]="editingBookId" 
+                     [class.fa-plus]="!editingBookId"></i>
+                  {{ editingBookId ? 'Uppdatera' : 'Lägg till' }}
+                </button>
+                
+                <button type="button" class="btn btn-secondary" 
+                        *ngIf="editingBookId" (click)="resetBookForm()">
+                  <i class="fas fa-times"></i> Avbryt
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h5><i class="fas fa-list"></i> Böcker</h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="books.length === 0" class="alert alert-info">
+              <i class="fas fa-info-circle"></i> Inga böcker ännu. Lägg till din första bok!
+            </div>
+            
+            <div class="table-responsive">
+              <table class="table table-hover" *ngIf="books.length > 0">
+                <thead>
+                  <tr>
+                    <th>Titel</th>
+                    <th>Författare</th>
+                    <th>Publicerad</th>
+                    <th>Åtgärder</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let book of books">
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.yearPublished}}</td>
+                    <td>
+                      <button class="btn btn-sm btn-warning me-2" 
+                              (click)="editBook(book)">
+                        <i class="fas fa-edit"></i> Redigera
+                      </button>
+                      <button class="btn btn-sm btn-danger" 
+                              (click)="deleteBook(book.id)">
+                        <i class="fas fa-trash"></i> Ta bort
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- QUOTES VIEW -->
+<div *ngIf="activeView === 'quotes'" class="quotes-view">
+  <div class="row">
+    <div class="col-12">
+      <h2><i class="fas fa-quote-left"></i> Mina Favorit Citat</h2>
+    </div>
+  </div>
+
+  <!-- Add/Edit Quote Form -->
+  <div class="row mb-4">
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <h5>
+            <i class="fas fa-pen"></i> 
+            {{ editingQuoteId !== null ? 'Redigera Citat' : 'Lägg till Nytt Citat' }}
+          </h5>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="editingQuoteId !== null ? updateQuote() : addQuote()">
+            <div class="mb-3">
+              <label class="form-label">Citat</label>
+              <textarea class="form-control" rows="3" 
+                        [(ngModel)]="newQuote" name="quote" 
+                        placeholder="Ange ditt favoritcitat..." required>
+              </textarea>
+            </div>
+            
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas" [class.fa-save]="editingQuoteId !== null" 
+                   [class.fa-plus]="editingQuoteId === null"></i>
+                {{ editingQuoteId !== null ? 'Uppdatera' : 'Lägg till' }}
+              </button>
+              
+              <button type="button" class="btn btn-secondary" 
+                      *ngIf="editingQuoteId !== null" 
+                      (click)="cancelQuoteEdit()">
+                <i class="fas fa-times"></i> Avbryt
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quotes  -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5><i class="fas fa-list"></i> Mina Citat ({{ quotes.length }})</h5>
+        </div>
+        <div class="card-body">
+          <div *ngIf="quotes.length === 0" class="alert alert-info">
+            <i class="fas fa-info-circle"></i> Inga citat ännu. Lägg till ditt första citat!
+          </div>
+          
+          <div class="list-group">
+            <div *ngFor="let quote of quotes" 
+                 class="list-group-item">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="quote-text flex-grow-1">
+                  <i class="fas fa-quote-left text-muted me-2"></i>
+                  <em>{{ quote.text }}</em>
+                  <i class="fas fa-quote-right text-muted ms-2"></i>
+                </div>
+                <div class="btn-group ms-3">
+                  <button class="btn btn-sm btn-warning" 
+                          (click)="editQuote(quote)">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-danger" 
+                          (click)="deleteQuote(quote.id)">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -38,10 +38,13 @@ export class Registration {
   }
 
 onSubmit() {
+
   this.form.markAllAsTouched();
+
   this.form.controls.confirmPassword.setErrors(null);
 
   if (!this.passwordsMatch()) {
+
     this.form.controls.confirmPassword.setErrors({
       passwordMismatch: true
     });
@@ -51,13 +54,31 @@ onSubmit() {
     return;
   }
 
-  console.log(this.form.value);
+  this.auth.createUser(this.form.value)
+    .subscribe({
 
-  this.successMessage = 'Registration successful!';
-  this.errorMessage = '';
+      next: () => {
 
-  setTimeout(() => {
-    this.router.navigate(['/signin']);
-  }, 1500);
+        this.successMessage =
+          'Registration successful!';
+
+        this.errorMessage = '';
+
+        setTimeout(() => {
+          this.router.navigate(['/signin']);
+        }, 1500);
+      },
+
+      error: (error: HttpErrorResponse) => {
+
+        console.log(error);
+
+        this.errorMessage =
+          error.error ||
+          'Registration failed';
+
+        this.successMessage = '';
+      }
+    });
 }
 }
