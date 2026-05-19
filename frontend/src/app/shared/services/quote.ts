@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment.prod';
 })
 export class Quote {
 
-  private baseUrl = 'https://project-redcode-backend-9s9f-production.up.railway.app/api/book';
+  private baseUrl = 'https://project-redcode-backend-9s9f-production.up.railway.app/api/quote';
 
   constructor(private http: HttpClient) {}
 
