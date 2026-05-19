@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 var jwtSecret = builder.Configuration["AppSettings:Token"];
 if (string.IsNullOrWhiteSpace(jwtSecret))
 {
-    throw new InvalidOperationException("JWT secret is not configured. Set AppSettings:Token in configuration or use user-secrets / environment variables.");
+    throw new InvalidOperationException("JWT secret is not configured. Set AppSettings__Token in Railway Variables.");
 }
 
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
@@ -20,7 +20,7 @@ var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = true;
+        options.RequireHttpsMetadata = false;   // Railway använder http internt
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -37,9 +37,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        policy.WithOrigins(
+            "http://localhost:4200",
+            "https://localhost:4200")
+            .AllowAnyMethod()
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 
@@ -54,26 +57,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.MapScalarApiReference();
 }
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAngular", policy =>
-    {
-        policy.WithOrigins(
-            "http://localhost:4200",
-            "https://*.railway.app",
-            "https://*.up.railway.app"
-        )
-        .SetIsOriginAllowedToAllowWildcardSubdomains()
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials();
-    });
-});
-
-//app.UseHttpsRedirection();
 
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();
