@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment.prod';
 })
 export class Book {
 
-  private baseUrl = environment.apiUrl;
+  private baseUrl = 'https://project-redcode-backend-9s9f-production.up.railway.app/api/book';
 
   constructor(private http: HttpClient) {}
 
