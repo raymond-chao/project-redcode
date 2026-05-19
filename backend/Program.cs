@@ -9,9 +9,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// JWT
 var jwtSecret = builder.Configuration["AppSettings:Token"];
 if (string.IsNullOrWhiteSpace(jwtSecret))
-    throw new InvalidOperationException("AppSettings:Token saknas! Lägg till den i Railway Variables.");
+    throw new InvalidOperationException("AppSettings:Token saknas i Railway Variables!");
 
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
 
@@ -31,9 +32,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddDefaultPolicy(policy =>
     {
         policy.AllowAnyOrigin()
               .AllowAnyHeader()
@@ -53,7 +55,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseCors("AllowAll");
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
