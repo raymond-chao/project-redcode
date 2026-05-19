@@ -1,5 +1,4 @@
 [dotnet]
-[dotnet]
 sdk-version = "8.0"
 
 [phases.build]
