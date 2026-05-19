@@ -12,8 +12,14 @@ namespace project_redcode.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(IConfiguration configuration) : ControllerBase
+    public class AuthController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
+
+        public AuthController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         [HttpPost("register")]
         public ActionResult<string> Register(UserDto request)
@@ -27,9 +33,9 @@ namespace project_redcode.Controllers
                 PasswordHashed = new PasswordHasher<User>()
                     .HashPassword(null, request.Password)
             };
+
             Database.Users.Add(newUser);
             return Ok(new { message = "User registered successfully" });
-
         }
 
         [HttpPost("login")]
@@ -46,13 +52,9 @@ namespace project_redcode.Controllers
 
             string token = CreateToken(user);
             return Ok(new { token });
-
-
-
-
         }
 
-        private string CreateToken(User user) //Sparar identieteten i token
+        private string CreateToken(User user)
         {
             List<Claim> claims = new List<Claim>
             {
@@ -60,18 +62,17 @@ namespace project_redcode.Controllers
             };
 
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(
-                    configuration.GetValue<string>("AppSettings:Token")!)); //TODO: LÄGG TILL KEY
+                Encoding.UTF8.GetBytes(_configuration["AppSettings:Token"]!));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new JwtSecurityToken(
-                issuer: configuration.GetValue<string>("AppSettings:Issuer"),
-                audience: configuration.GetValue<string>("AppSettings:Audience"),
+                issuer: null,
+                audience: null,
                 claims: claims,
                 expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds
-                 );
+                signingCredentials: creds);
+
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
     }
