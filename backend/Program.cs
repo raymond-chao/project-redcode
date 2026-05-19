@@ -1,7 +1,7 @@
-using Scalar.AspNetCore;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,16 +11,14 @@ builder.Services.AddSwaggerGen();
 
 var jwtSecret = builder.Configuration["AppSettings:Token"];
 if (string.IsNullOrWhiteSpace(jwtSecret))
-{
-    throw new InvalidOperationException("JWT secret is not configured. Set AppSettings__Token in Railway Variables.");
-}
+    throw new InvalidOperationException("AppSettings:Token saknas i Railway Variables!");
 
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false; 
+        options.RequireHttpsMetadata = false;
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -35,17 +33,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngular", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins(
-            "https://project-redcode-production.up.railway.app",
-            "https://project-redcode.railway.app",
-            "http://localhost:4200",
-            "https://localhost:4200"
-        )
-        .AllowAnyMethod()
-        .AllowAnyHeader()
-        .AllowCredentials();
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
     });
 });
 
@@ -61,7 +53,8 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseCors("AllowAngular");
+app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
