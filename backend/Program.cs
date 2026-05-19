@@ -11,7 +11,7 @@ builder.Services.AddSwaggerGen();
 
 var jwtSecret = builder.Configuration["AppSettings:Token"];
 if (string.IsNullOrWhiteSpace(jwtSecret))
-    throw new InvalidOperationException("AppSettings:Token saknas i Railway Variables!");
+    throw new InvalidOperationException("AppSettings:Token saknas! Lägg till den i Railway Variables.");
 
 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret));
 
@@ -36,8 +36,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll", policy =>
     {
         policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
@@ -54,7 +54,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
-
 app.UseAuthentication();
 app.UseAuthorization();
 
