@@ -9,7 +9,7 @@ export class Auth {
 
   constructor(private http: HttpClient) { }
 
-  private baseUrl = environment.apiUrl;
+  private baseUrl = 'https://project-redcode-backend-9s9f-production.up.railway.app/api/auth';
 
     getAll() {
     return this.http.get(this.baseUrl);
