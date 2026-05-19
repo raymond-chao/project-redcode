@@ -9,34 +9,34 @@ export class Auth {
 
   constructor(private http: HttpClient) { }
 
-  private baseURL = environment.apiUrl;
+  private baseUrl = environment.apiUrl;
 
     getAll() {
-    return this.http.get(this.baseURL);
+    return this.http.get(this.baseUrl);
   }
 
   create(book: any) {
-    return this.http.post(this.baseURL, book);
+    return this.http.post(this.baseUrl, book);
   }
 
   update(id: number, book: any) {
-    return this.http.put(`${this.baseURL}/${id}`, book);
+    return this.http.put(`${this.baseUrl}/${id}`, book);
   }
 
   delete(id: number) {
-    return this.http.delete(`${this.baseURL}/${id}`);
+    return this.http.delete(`${this.baseUrl}/${id}`);
   }
 
   createUser(formData:any){
     return this.http.post(
-      this.baseURL + '/register',
+      this.baseUrl + '/register',
       formData
     );
   }
 
   signin(formData:any){
     return this.http.post(
-      this.baseURL + '/login',
+      this.baseUrl + '/login',
       formData
     );
   }

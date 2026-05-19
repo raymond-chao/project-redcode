@@ -7,7 +7,7 @@ import { environment } from '../../../environments/environment.prod';
 })
 export class Book {
 
-  private baseURL = environment.apiUrl;
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
