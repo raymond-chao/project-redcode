@@ -24,6 +24,11 @@ namespace project_redcode.Controllers
         [HttpPost("register")]
         public ActionResult<string> Register(UserDto request)
         {
+            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
+                return BadRequest("Email and password are required");
+
+            if (Database.Users.Any(user => user.Username == request.Email))
+                return BadRequest("User already exists");
             if (Database.Users.Any(user => user.Username == request.Email))
                 return BadRequest("User already exists");
 
@@ -41,6 +46,9 @@ namespace project_redcode.Controllers
         [HttpPost("login")]
         public ActionResult<string> Login(UserDto request)
         {
+            
+             if (string.IsNullOrEmpty(request.Email))
+                return BadRequest("Email is required");
             var user = Database.Users.FirstOrDefault(user => user.Username == request.Email);
             if (user == null)
                 return BadRequest("User not found");
