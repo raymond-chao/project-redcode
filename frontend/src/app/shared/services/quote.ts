@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { API_BASE_URL } from './api-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Quote {
 
-  private baseUrl = 'https://localhost:7057/api/quotes';
+  private baseUrl = `${API_BASE_URL}/quotes`;
 
   constructor(private http: HttpClient) {}
 

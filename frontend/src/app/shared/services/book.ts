@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { API_BASE_URL } from './api-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Book {
 
-  baseUrl = 'https://localhost:7057/api/book';
+  baseUrl = `${API_BASE_URL}/book`;
 
   constructor(private http: HttpClient) {}
 
