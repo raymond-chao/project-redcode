@@ -38,11 +38,14 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular", policy =>
     {
         policy.WithOrigins(
+            "https://project-redcode-production.up.railway.app",
+            "https://project-redcode.railway.app",
             "http://localhost:4200",
-            "https://localhost:4200")
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials();
+            "https://localhost:4200"
+        )
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
     });
 });
 
