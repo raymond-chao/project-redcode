@@ -1,11 +1,12 @@
 [dotnet]
+[dotnet]
 sdk-version = "8.0"
 
-[phases.install]
-cmds = ["dotnet restore"]
-
 [phases.build]
-cmds = ["dotnet publish -c Release -o /app/out --no-restore"]
+cmds = [
+  "dotnet restore",
+  "dotnet publish --no-restore -c Release -o /app/out project-redcode.csproj"
+]
 
 [start]
 cmd = "dotnet /app/out/project-redcode.dll"
