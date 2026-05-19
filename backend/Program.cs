@@ -58,14 +58,15 @@ app.UseExceptionHandler(errorApp =>
         var error = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
         if (error != null)
         {
-            await context.Response.WriteAsJsonAsync(new {
+            await context.Response.WriteAsJsonAsync(new
+            {
                 message = error.Error.Message,
-                type = error.Error.GetType().Name
+                type = error.Error.GetType().Name,
+                stackTrace = error.Error.StackTrace
             });
         }
     });
 });
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
